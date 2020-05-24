@@ -1,0 +1,241 @@
+
+
+//configuración de aplicaciones
+
+  application{
+   config{
+   
+   		baseName fleastore
+        applicationType gateway
+        packageName com.themakers.storeonline
+        serviceDiscoveryType eureka
+        authenticationType jwt
+        prodDatabaseType postgresql
+        devDatabaseType postgresql
+        cacheProvider hazelcast
+        buildTool maven
+        serverPort 8080
+        clientFramework angularX
+        useSass true
+        languages [es, en]
+        nativeLanguage es
+        enableTranslation true
+        websocket spring-websocket
+        testFrameworks [protractor]
+   }
+   entities *
+   
+   }
+   
+   application {
+
+	config{
+    
+    		baseName inventariomicroservicio
+            applicationType microservice
+            packageName com.themkers.inventario
+            serviceDiscoveryType eureka
+            authenticationType jwt
+            prodDatabaseType postgresql
+            devDatabaseType postgresql
+            enableHibernateCache false
+            buildTool maven
+            serverPort 8081
+            languages [es, en]
+    		
+    }
+    entities Producto
+}
+   
+application {
+
+	config{
+    
+    		baseName facturacionmicroservicio
+            applicationType microservice
+            packageName com.themkers.facturacion
+            serviceDiscoveryType eureka
+            authenticationType jwt
+            prodDatabaseType postgresql
+            devDatabaseType postgresql
+            enableHibernateCache false
+            buildTool maven
+            serverPort 8082
+            languages [es, en]
+    		
+    }
+    entities Factura
+}
+   
+application {
+
+	config{
+    
+    		baseName notificacionesmicroservicio
+            applicationType microservice
+            packageName com.themkers.notificacion
+            serviceDiscoveryType eureka
+            authenticationType jwt
+            databaseType mongodb
+            cacheProvider no
+            enableHibernateCache false
+            buildTool maven
+            serverPort 8083
+            languages [es, en]
+    		
+    }
+    entities Notificacion
+}
+
+microservice Notificacion with notificacionesmicroservicio
+
+//Entidadad notificación
+entity Notificacion{
+
+  fecha Instant required
+  mensaje String 
+  fechaSend Instant required
+  userId Long //from del gateway
+}
+    
+
+entity Factura{
+  codigo String
+  estado FacturaEstado 
+  fecha Instant
+  modoPago ModoPago
+  tipoFactura TipoFactura
+  fechaPago Instant
+  cantidad BigDecimal
+  sucursal Long 
+
+}
+
+entity DetalleFactura{
+  producto String 
+  codigoProducto String
+  cantidad String
+}
+
+entity Abono{
+  usuario Long
+  fecha Instant
+  codigo String
+  cantidadValor BigDecimal 
+}
+
+entity Movimiento{
+  tipo TipoMovimiento
+  fecha Instant
+  sucursal Long
+  motivo String
+  observacion String
+
+}
+
+entity DetalleMovimiento{
+  codigo String
+  nombre String
+  producto Long
+  cantidad Long
+  fecha Instant
+}
+
+enum FacturaEstado {
+    PAGADO, PENDIENTE, CANCELADO
+}
+
+enum TipoFactura {
+ COMPRA, VENTA, DEVOLUCION 
+}
+
+enum ModoPago {
+ EFECTIVO, TARJETA_CREDITO, GIRO 
+}
+
+enum TipoMovimiento {
+  ENTRADA, SALIDA, MODIFICACION
+}
+
+ 
+microservice Producto, Stock with inventariomicroservicio
+
+
+//entidades inventario 
+entity Producto{
+	nombre String
+    referencia String
+    descripcion String
+    codigo String
+    proveedor Integer required    
+}
+
+entity ProductoCategoria{
+	nombre String
+}
+
+entity ProductoDetalle{
+	codigo String
+}
+
+entity Lista{
+  nombre String
+  codigo String
+  descripcion Blob
+}
+
+entity Marca{
+	nombre String
+    descripcion String
+   
+}
+
+entity Talla{
+	nombre String
+   
+}
+
+entity TipoTalla{
+	nombre String
+}
+
+entity Stock{
+    cantidad Long
+}
+
+entity Sucursal{
+	nombre String
+    direccion String
+}
+
+entity Usuario{
+	nombre String
+    apellido String
+    id String
+    genero String
+    rol Long
+    telefono Instant
+    direccion String 
+}
+
+entity Rol{
+	nombre String
+}
+
+entity Provedor{
+	codigo Integer
+}
+
+relationship OneToOne{
+Usuario {job} to User
+}
+
+ relationship ManyToOne{
+ 
+  Stock{producto(nombre)} to Producto
+ }
+
+
+
+
+
